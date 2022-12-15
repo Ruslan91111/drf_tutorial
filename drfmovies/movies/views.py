@@ -21,14 +21,31 @@ class MoviesAPIView(APIView):
         # проверка валидности передаваемых данных
         serializer = MoviesSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        movie_new = Movies.objects.create(
-            title=request.data['title'],
-            plot=request.data['plot'],
-            cat_id=request.data['cat_id']
-        )
+        return Response({'movie': serializer.data})
 
-        return Response({'movie': MoviesSerializer(movie_new).data})
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUT not allowed"})
+
+        try:
+            instance = Movies.objects.get(pk=pk)
+        except:
+            return Response({"error": "Objects does not exists"})
+
+        serializer = MoviesSerializer(data=request.data, instance=instance)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"movie": serializer.data})
+
+
+
+
+
+
 
 
 

@@ -10,17 +10,25 @@ from .serializers import MoviesSerializer
 
 class MoviesAPIView(APIView):
     def get(self, request):
-        list_of_movies = Movies.objects.all().values()
-        return Response({'movies': list(list_of_movies)})
+        list_of_movies = Movies.objects.all()
+        # список передаем на сериализатор, устанавливаем параметр many=True,
+        # чтобы обрабатывало список, а не одну запись
+        # затем преобразовывает в байтовую json строку
+        # по сути data ниже выполняет все те же функии, что и encode()
+        return Response({'movies': MoviesSerializer(list_of_movies, many=True).data})
 
     def post(self, request):
+        # проверка валидности передаваемых данных
+        serializer = MoviesSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         movie_new = Movies.objects.create(
             title=request.data['title'],
             plot=request.data['plot'],
             cat_id=request.data['cat_id']
         )
 
-        return Response({'movie': model_to_dict(movie_new)})
+        return Response({'movie': MoviesSerializer(movie_new).data})
 
 
 

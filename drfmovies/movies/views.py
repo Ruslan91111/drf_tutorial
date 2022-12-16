@@ -1,6 +1,6 @@
 from django.forms import model_to_dict
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,22 +8,27 @@ from .models import Movies
 from .serializers import MoviesSerializer
 
 
+class MoviesViewSet(viewsets.ModelViewSet):
+    queryset = Movies.objects.all()
+    serializer_class = MoviesSerializer
+
+
+
+
 # класс одновременно представляет список объектов, а также создает объект
-class MoviesAPIList(generics.ListCreateAPIView):
-    queryset = Movies.objects.all()
-    serializer_class = MoviesSerializer
+# class MoviesAPIList(generics.ListCreateAPIView):
+#     queryset = Movies.objects.all()
+#     serializer_class = MoviesSerializer
 
 
-class MoviesAPIUpdate(generics.UpdateAPIView):
-    queryset = Movies.objects.all()
-    serializer_class = MoviesSerializer
+# class MoviesAPIUpdate(generics.UpdateAPIView):
+#     queryset = Movies.objects.all()
+#     serializer_class = MoviesSerializer
 
 
-class MoviesAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Movies.objects.all()
-    serializer_class = MoviesSerializer
-
-
+# class MoviesAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Movies.objects.all()
+#     serializer_class = MoviesSerializer
 
 
 # class MoviesAPIView(APIView):

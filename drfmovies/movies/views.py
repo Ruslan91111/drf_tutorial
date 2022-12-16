@@ -1,16 +1,43 @@
 from django.forms import model_to_dict
 from django.shortcuts import render
 from rest_framework import generics, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Movies
+from .models import Movies, Category
 from .serializers import MoviesSerializer
 
 
 class MoviesViewSet(viewsets.ModelViewSet):
-    queryset = Movies.objects.all()
+    # queryset = Movies.objects.all()
     serializer_class = MoviesSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        if not pk:
+            return Movies.objects.all()[:3]
+
+        return Movies.objects.filter(pk=pk)
+
+
+
+
+    # декоратор, добавляющий нестандартный маршрут
+    # отображение конкретной категории
+    @action(methods=['get'], detail=True)
+    def category(self, request, pk=None):
+        cats = Category.objects.get(pk=pk)
+        return Response({'cats': [cats.title_cat]})
+
+
+    # отображение всех категорий
+    # @action(methods=['get'], detail=False)
+    # def category(self, request):
+    #     cats = Category.objects.all()
+    #     return Response({'cats': [c.title_cat for c in cats]})
+
+
 
 
 

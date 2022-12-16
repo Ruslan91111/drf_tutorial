@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 from movies.views import MoviesAPIList, MoviesAPIUpdate, MoviesAPIDestroy
 
@@ -29,9 +29,13 @@ from movies.views import MoviesAPIList, MoviesAPIUpdate, MoviesAPIDestroy
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/v1/drf-auth/', include('rest_framework.urls')), #аутентификация
     path('api/v1/movies/', MoviesAPIList.as_view()),
     path('api/v1/movies/<int:pk>/', MoviesAPIUpdate.as_view()),
     path('api/v1/moviesdelete/<int:pk>/', MoviesAPIDestroy.as_view()),
+
+    path('api/v1/auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
 
     # path('api/v1/movieslist', MoviesViewSet.as_view({'get': 'list'})),
     # path('api/v1/movieslist/<int:pk>/', MoviesViewSet.as_view({'put': 'update'})),

@@ -9,9 +9,11 @@ from .models import Movies
 
 
 class MoviesSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Movies
-        fields = ("title", "plot", "cat")
+        fields = ("title", "plot", "cat", "user")
 
 
 

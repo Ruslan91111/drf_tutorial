@@ -1,34 +1,58 @@
 from django.forms import model_to_dict
 from django.shortcuts import render
-from rest_framework import generics, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from rest_framework import generics, viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from .models import Movies, Category
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import MoviesSerializer
 
 
-class MoviesViewSet(viewsets.ModelViewSet):
-    # queryset = Movies.objects.all()
+class MoviesAPIList(generics.ListCreateAPIView):
+    queryset = Movies.objects.all()
     serializer_class = MoviesSerializer
-
-    def get_queryset(self):
-        pk = self.kwargs.get("pk")
-        if not pk:
-            return Movies.objects.all()[:3]
-
-        return Movies.objects.filter(pk=pk)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
+class MoviesAPIUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MoviesSerializer
+    # удалять может только автор записи
+    permission_classes = (IsOwnerOrReadOnly,)
 
 
-    # декоратор, добавляющий нестандартный маршрут
-    # отображение конкретной категории
-    @action(methods=['get'], detail=True)
-    def category(self, request, pk=None):
-        cats = Category.objects.get(pk=pk)
-        return Response({'cats': [cats.title_cat]})
+class MoviesAPIDestroy(generics.RetrieveDestroyAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MoviesSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
+
+
+
+
+
+
+# убран, чтобы нагляднее посмотреть работу permissions
+# class MoviesViewSet(viewsets.ModelViewSet):
+#     # queryset = Movies.objects.all()
+#     serializer_class = MoviesSerializer
+#
+#     def get_queryset(self):
+#         pk = self.kwargs.get("pk")
+#         if not pk:
+#             return Movies.objects.all()[:3]
+#
+#         return Movies.objects.filter(pk=pk)
+#
+#     # декоратор, добавляющий нестандартный маршрут
+#     # отображение конкретной категории
+#     @action(methods=['get'], detail=True)
+#     def category(self, request, pk=None):
+#         cats = Category.objects.get(pk=pk)
+#         return Response({'cats': [cats.title_cat]})
 
 
     # отображение всех категорий

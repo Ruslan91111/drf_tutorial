@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+
 from movies.views import MoviesAPIList, MoviesAPIUpdate, MoviesAPIDestroy
 
 
@@ -34,8 +36,14 @@ urlpatterns = [
     path('api/v1/movies/<int:pk>/', MoviesAPIUpdate.as_view()),
     path('api/v1/moviesdelete/<int:pk>/', MoviesAPIDestroy.as_view()),
 
-    path('api/v1/auth/', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path('api/v1/auth/', include('djoser.urls')),     # djoser
+    re_path(r'^auth/', include('djoser.urls.authtoken')),    # djoser
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),     # JWT
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),     # JWT
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),     # JWT
+
+
 
     # path('api/v1/movieslist', MoviesViewSet.as_view({'get': 'list'})),
     # path('api/v1/movieslist/<int:pk>/', MoviesViewSet.as_view({'put': 'update'})),

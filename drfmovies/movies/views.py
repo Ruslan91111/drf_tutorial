@@ -22,8 +22,8 @@ class MoviesAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Movies.objects.all()
     serializer_class = MoviesSerializer
     # удалять может только автор записи
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication,)
 
 
 class MoviesAPIDestroy(generics.RetrieveDestroyAPIView):
